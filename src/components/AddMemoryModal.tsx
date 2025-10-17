@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase, Memory } from '../lib/supabase';
-import { X, Loader } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 
 interface AddMemoryModalProps {
   memory: Memory | null;
@@ -117,68 +117,79 @@ export function AddMemoryModal({ memory, onClose, onSave }: AddMemoryModalProps)
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-white">
-            {memory ? 'Edit Memory' : 'Add New Memory'}
-          </h2>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in">
+      <div className="glass border-2 border-white/20 rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-slide-in-bottom">
+        <div className="flex items-center justify-between p-6 border-b border-white/10 backdrop-blur-xl">
+          <div>
+            <h2 className="text-2xl font-bold text-gradient flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-cyan-400" />
+              {memory ? 'Edit Memory' : 'Add New Memory'}
+            </h2>
+            <p className="text-gray-400 text-sm mt-1">
+              {memory ? 'Update your stored knowledge' : 'Store new knowledge in your digital brain'}
+            </p>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-all"
+            className="p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 border border-white/10 hover:border-white/20"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
+          <div className="stagger-item">
+            <label className="block text-sm font-semibold text-gray-300 mb-2">
               Title
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full glass border-2 border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition-all duration-300 hover:border-white/20"
               placeholder="Give this memory a title"
               required
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+          <div className="stagger-item" style={{ animationDelay: '0.1s' }}>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">
               Type
             </label>
-            <select
-              value={memoryType}
-              onChange={(e) => setMemoryType(e.target.value as Memory['memory_type'])}
-              className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="note">Note</option>
-              <option value="document">Document</option>
-              <option value="goal">Goal</option>
-              <option value="reminder">Reminder</option>
-              <option value="conversation">Conversation</option>
-            </select>
+            <div className="grid grid-cols-5 gap-2">
+              {(['note', 'document', 'goal', 'reminder', 'conversation'] as const).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setMemoryType(type)}
+                  className={`px-3 py-2.5 rounded-xl border-2 transition-all duration-300 capitalize text-sm font-semibold ${
+                    memoryType === type
+                      ? 'border-blue-500 bg-blue-500/10 text-white scale-105'
+                      : 'border-white/10 text-gray-400 hover:text-white hover:border-white/20 hover:bg-white/5'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+          <div className="stagger-item" style={{ animationDelay: '0.2s' }}>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">
               Content
             </label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              rows={10}
-              className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              rows={12}
+              className="w-full glass border-2 border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition-all duration-300 hover:border-white/20 resize-none custom-scrollbar"
               placeholder="Write your memory content here..."
               required
             />
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
+            <div className="animate-fade-in glass border-2 border-red-500/50 rounded-xl p-4 text-red-400 text-sm backdrop-blur-xl">
               {error}
             </div>
           )}
@@ -187,17 +198,31 @@ export function AddMemoryModal({ memory, onClose, onSave }: AddMemoryModalProps)
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-all"
+              className="flex-1 px-5 py-3.5 glass border-2 border-white/10 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 relative group overflow-hidden rounded-xl p-[2px] transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
             >
-              {loading && <Loader className="w-5 h-5 animate-spin" />}
-              {loading ? 'Saving...' : memory ? 'Update Memory' : 'Save Memory'}
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 animate-gradient"></div>
+              <div className="relative bg-black rounded-xl px-6 py-3.5 group-hover:bg-transparent transition-all duration-300">
+                <span className="flex items-center justify-center gap-2 text-white font-semibold">
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5" />
+                      {memory ? 'Update Memory' : 'Save Memory'}
+                    </>
+                  )}
+                </span>
+              </div>
             </button>
           </div>
         </form>

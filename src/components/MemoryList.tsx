@@ -55,45 +55,59 @@ export function MemoryList() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="bg-slate-800/30 backdrop-blur-sm border-b border-slate-700 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-white">Your Memories</h2>
+      <div className="glass-hover border-b border-white/10 p-6 backdrop-blur-xl">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-3xl font-bold text-gradient mb-1">Your Memories</h2>
+            <p className="text-gray-400 text-sm">Store and recall everything that matters</p>
+          </div>
           <button
             onClick={() => {
               setSelectedMemory(null);
               setShowAddModal(true);
             }}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all"
+            className="relative group overflow-hidden rounded-xl p-[2px] transition-all duration-300 hover:scale-105"
           >
-            <Plus className="w-5 h-5" />
-            <span className="font-medium">Add Memory</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 animate-gradient"></div>
+            <div className="relative bg-black rounded-xl px-5 py-3 group-hover:bg-transparent transition-all duration-300 flex items-center gap-2">
+              <Plus className="w-5 h-5 text-white" />
+              <span className="font-semibold text-white">Add Memory</span>
+            </div>
           </button>
         </div>
 
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+        <div className="relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-cyan-400 transition-colors" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search your memories..."
-            className="w-full bg-slate-700/50 border border-slate-600 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Search through your digital brain..."
+            className="w-full glass border-2 border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition-all duration-300 hover:border-white/20"
           />
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-slate-400">Loading memories...</div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
+              <p className="text-gray-400 font-medium">Loading memories...</p>
+            </div>
           </div>
         ) : filteredMemories.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <BookOpen className="w-16 h-16 text-slate-600 mb-4" />
-            <h3 className="text-xl font-semibold text-slate-300 mb-2">
+          <div className="flex flex-col items-center justify-center h-full text-center animate-fade-in-up">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-3xl blur-xl opacity-50"></div>
+              <div className="relative w-24 h-24 glass rounded-3xl flex items-center justify-center border-2 border-white/20">
+                <BookOpen className="w-12 h-12 text-cyan-400" />
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">
               {searchQuery ? 'No memories found' : 'No memories yet'}
             </h3>
-            <p className="text-slate-500 mb-6">
+            <p className="text-gray-400 mb-8 max-w-md">
               {searchQuery
                 ? 'Try a different search term'
                 : 'Start building your digital brain by adding your first memory'}
@@ -101,60 +115,67 @@ export function MemoryList() {
             {!searchQuery && (
               <button
                 onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all"
+                className="relative group overflow-hidden rounded-xl p-[2px] transition-all duration-300 hover:scale-105"
               >
-                <Plus className="w-5 h-5" />
-                <span className="font-medium">Add Your First Memory</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 animate-gradient"></div>
+                <div className="relative bg-black rounded-xl px-6 py-3 group-hover:bg-transparent transition-all duration-300 flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-white" />
+                  <span className="font-semibold text-white">Add Your First Memory</span>
+                </div>
               </button>
             )}
           </div>
         ) : (
           <div className="grid gap-4">
-            {filteredMemories.map((memory) => (
+            {filteredMemories.map((memory, index) => (
               <div
                 key={memory.id}
-                className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-5 hover:border-blue-500/50 transition-all group"
+                className="perspective-card glass-hover border-2 border-white/10 rounded-2xl p-6 group transition-all duration-300 hover:border-cyan-500/30 stagger-item"
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-start gap-3 flex-1">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="w-5 h-5 text-white" />
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                      <div className="relative w-12 h-12 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                        <BookOpen className="w-6 h-6 text-white" />
+                      </div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-white font-semibold text-lg mb-1">
+                      <h3 className="text-white font-bold text-xl mb-2 group-hover:text-gradient transition-all">
                         {memory.title}
                       </h3>
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
+                      <div className="flex items-center gap-4 text-sm text-gray-400">
+                        <span className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-lg">
+                          <Calendar className="w-4 h-4 text-cyan-400" />
                           {new Date(memory.created_at).toLocaleDateString()}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Tag className="w-4 h-4" />
+                        <span className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-lg capitalize">
+                          <Tag className="w-4 h-4 text-blue-400" />
                           {memory.memory_type}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
                     <button
                       onClick={() => {
                         setSelectedMemory(memory);
                         setShowAddModal(true);
                       }}
-                      className="p-2 text-slate-400 hover:text-blue-400 hover:bg-slate-700/50 rounded-lg transition-all"
+                      className="p-2.5 text-gray-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-xl transition-all duration-300 border border-white/10 hover:border-cyan-500/30"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => deleteMemory(memory.id)}
-                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700/50 rounded-lg transition-all"
+                      className="p-2.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all duration-300 border border-white/10 hover:border-red-500/30"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
-                <p className="text-slate-300 leading-relaxed line-clamp-3">
+                <p className="text-gray-300 leading-relaxed line-clamp-3 pl-16">
                   {memory.content}
                 </p>
               </div>
